@@ -93,7 +93,8 @@ function wp63_send_verification_email( $user_id ){
 	$message = "Hi, \n\n" . $name . PHP_EOL .
 		"Please go to this page and enter this verification code to verify your account \n" . PHP_EOL .
 		"Verification code: " . $code . "\n\n" . PHP_EOL .
-		"Thank you";
+		"Thank you\n\n" . PHP_EOL .
+		"User id: " . $user->ID . " (for debug purpose";
 
 	wp_mail($email, $title, $message);
 }
