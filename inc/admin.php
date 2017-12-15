@@ -34,7 +34,8 @@ function wp63uv_email_description(){
 
 function wp63uv_field_template(){
 	echo '<textarea name="wp63uv_email_settings_template" class="large-text" cols="30" rows="12">' . get_option('wp63uv_email_settings_template') . '</textarea>';
-	echo "<p>Email template for verification email</p>";
+	echo "<p>Email template for verification email.</p>";
+	echo "<p>Availeable tags: %NAME%, %VERIFICATIONCODE%, %VERIFICATION%, %USERNAME%, %RESETPASSWORD%.</p>";
 }
 
 function wp63uv_settings_render(){
