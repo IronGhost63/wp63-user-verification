@@ -93,16 +93,18 @@ function wp63_sc_verification_box($atts){
 function wp63_send_verification_email( $user_id ){
 	$user = get_userdata( $user_id );
 
+	$username = $user->user_login;
 	$name = $user->first_name;
 	$email = $user->user_email;
 	$code = get_user_meta($user_id, "fresh_verification_code", true);
 	$title = __("Account Verification on ", "wp63uv") . get_option("blogname");
+	$verification_page = get_permalink(get_option('wp63uv_page_setting_id')) . "?user_id=" . $user_id;
+	$lostpassword = wp_lostpassword_url();
 
-	$message = "Hi, \n\n" . $name . PHP_EOL .
-		"Please go to this page and enter this verification code to verify your account \n" . PHP_EOL .
-		"Verification code: " . $code . "\n\n" . PHP_EOL .
-		"Thank you\n\n" . PHP_EOL .
-		"User id: " . $user->ID . " (for debug purpose";
+	$tags = array('%NAME%', '%VERIFICATIONCODE%', '%VERIFICATION%', '%USERNAME%', '%RESETPASSWORD%');
+	$replace = array($name, $code, $verification_page, $username, $lostpassword);
+
+	$message = str_replace($tags, $replace, get_option('wp63uv_email_settings_template'));
 
 	wp_mail($email, $title, $message);
 }
