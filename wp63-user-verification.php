@@ -16,7 +16,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 define( 'WP63UV_PATH', plugin_dir_path( __FILE__ ) );
 
 require_once("inc/admin.php");
-//require_once("inc/class-wc-registration-email.php");
 
 add_filter( 'authenticate', 'wp63_check_user_verification', 35, 3 );
 add_filter( 'insert_user_meta', 'wp63_insert_verification_code', 35, 3);
@@ -25,6 +24,9 @@ add_action( 'woocommerce_registration_redirect', 'wp63uv_redirect_after_registra
 
 add_shortcode( 'user_verification', 'wp63_sc_verification_box');
 
+/*
+* Use WooCommerce email function instead of built-in, if user has WooCommerce activated
+*/
 if ( class_exists( 'WooCommerce' ) ) {
 	add_filter( 'woocommerce_locate_template', 'myplugin_woocommerce_locate_template', 10, 3 );
 	add_filter( 'woocommerce_email_classes', 'wp63uv_intercept_wc_registration_email' );
@@ -131,6 +133,11 @@ function wp63_send_verification_email( $user_id ){
 
 	wp_mail($email, $title, $message);
 }
+
+/*
+* myplugin_woocommerce_locate_template() - redirect template locating to this plugin before from theme 
+* Copied from here: https://www.skyverge.com/blog/override-woocommerce-template-file-within-a-plugin/
+*/
 
 function myplugin_woocommerce_locate_template( $template, $template_name, $template_path ) {
 	global $woocommerce;
