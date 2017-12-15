@@ -16,11 +16,23 @@ if ( ! defined( 'ABSPATH' ) ) {
 define( 'WP63UV_PATH', plugin_dir_path( __FILE__ ) );
 
 require_once("inc/admin.php");
+//require_once("inc/class-wc-registration-email.php");
 
 add_filter( 'authenticate', 'wp63_check_user_verification', 35, 3 );
 add_filter( 'insert_user_meta', 'wp63_insert_verification_code', 35, 3);
-add_action( 'user_register', 'wp63_send_verification_email', 35, 1);
 add_shortcode( 'user_verification', 'wp63_sc_verification_box');
+
+if ( class_exists( 'WooCommerce' ) ) {
+	add_filter( 'woocommerce_locate_template', 'myplugin_woocommerce_locate_template', 10, 3 );
+	add_filter( 'woocommerce_email_classes', 'wp63uv_intercept_wc_registration_email' );
+}else{
+	add_action( 'user_register', 'wp63_send_verification_email', 35, 1);
+}
+
+function wp63uv_intercept_wc_registration_email( $emails ) {
+	$emails['WC_Email_Customer_New_Account'] = include( 'inc/class-wc-registration-email.php' );;
+	return $emails;
+}
 
 function wp63_check_user_verification($user, $username, $password){
 	if( is_wp_error($user) ){
@@ -107,5 +119,35 @@ function wp63_send_verification_email( $user_id ){
 	$message = str_replace($tags, $replace, get_option('wp63uv_email_settings_template'));
 
 	wp_mail($email, $title, $message);
+}
+
+function myplugin_woocommerce_locate_template( $template, $template_name, $template_path ) {
+	global $woocommerce;
+
+	$_template = $template;
+
+	if ( ! $template_path ) $template_path = $woocommerce->template_url;
+
+	$plugin_path  = WP63UV_PATH . '/woocommerce/';
+
+	// Look within passed path within the theme - this is priority
+	$template = locate_template(
+
+		array(
+			$template_path . $template_name,
+			$template_name
+		)
+	);
+
+	// Modification: Get the template from this plugin, if it exists
+	if ( ! $template && file_exists( $plugin_path . $template_name ) )
+		$template = $plugin_path . $template_name;
+
+	// Use default template
+	if ( ! $template )
+		$template = $_template;
+
+	// Return what we found
+	return $template;
 }
 ?>

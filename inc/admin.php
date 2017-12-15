@@ -63,9 +63,14 @@ function wp63uv_field_page(){
 }
 
 function wp63uv_field_template(){
-	echo '<textarea name="wp63uv_email_settings_template" class="large-text" cols="30" rows="12">' . get_option('wp63uv_email_settings_template') . '</textarea>';
-	echo "<p>Email template for verification email.</p>";
-	echo "<p>Availeable tags: %NAME%, %VERIFICATIONCODE%, %VERIFICATION%, %USERNAME%, %RESETPASSWORD%.</p>";
+	if( class_exists('WooCommerce') ){
+		echo "<p>" . __("Please use WooCommerce Email Template.", "wp63uv") . "</p>"; 
+		echo "<p>" . __("Copy our integrated email templates from <i>/wp-content/plugins/wp63-user-verification/woocommerce</i> to your theme directory and edit template from there.") . "</p>"; 
+	}else{
+		echo '<textarea name="wp63uv_email_settings_template" class="large-text" cols="30" rows="12">' . get_option('wp63uv_email_settings_template') . '</textarea>';
+		echo "<p>Email template for verification email.</p>";
+		echo "<p>Availeable tags: %NAME%, %VERIFICATIONCODE%, %VERIFICATION%, %USERNAME%, %RESETPASSWORD%.</p>";
+	}
 }
 
 function wp63uv_settings_render(){
