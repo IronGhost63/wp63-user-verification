@@ -9,6 +9,14 @@ Version: 1.0
 Text Domain: wp63uv
 */
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
+define( 'WP63UV_PATH', plugin_dir_path( __FILE__ ) );
+
+require_once("inc/admin.php");
+
 add_filter( 'authenticate', 'wp63_check_user_verification', 35, 3 );
 add_filter( 'insert_user_meta', 'wp63_insert_verification_code', 35, 3);
 add_action( 'user_register', 'wp63_send_verification_email', 35, 1);
