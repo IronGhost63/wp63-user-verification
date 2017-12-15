@@ -12,7 +12,7 @@ settings_errors( 'wp63uv_messages' );
 
 <div class="wrap">
 	<h1><?php echo esc_html( get_admin_page_title() ); ?></h1>
-	<form action="options-general.php" method="post">
+	<form action="options.php" method="post">
 	<?php
 	// output security fields for the registered setting "wporg"
 	settings_fields( 'wp63uv_settings' );

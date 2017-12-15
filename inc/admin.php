@@ -21,7 +21,7 @@ function wp63uv_register_option(){
 		"wp63uv_email_settings" 
 	);
 
-	register_setting( 'wp63uv_settings_email', 'wp63uv_email_settings_template' );
+	register_setting( 'wp63uv_settings', 'wp63uv_email_settings_template' );
 }
 
 function wp63uv_register_menu(){
