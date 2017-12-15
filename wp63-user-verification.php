@@ -89,7 +89,7 @@ function wp63_sc_verification_box($atts){
 		if( is_wp_error($verify) ){
 			$return = '<div class="wp63-verification-failed">' . $verify->get_error_message() . '</div>';
 		}else{
-			$return = '<div class="wp63-verification-success">' . __("Your account is now verified!", "wp63uv") . '</div>';
+			$return = '<div class="wp63-verification-success">' . __("Your account is now verified!", "wp63uv") . ' <a href="' . wp63uv_login_url() .'">' . __("Sign in", "wp63uv") . '</a></div>';
 		}
 
 	}else{
@@ -178,5 +178,13 @@ function wp63uv_redirect_after_registration(){
 	$verification_page = get_permalink(get_option('wp63uv_page_setting_id')) . "?user_id=" . $GLOBALS['wp63_user_id'] . "&registered=true";
 
 	return $verification_page;
+}
+
+function wp63uv_login_url(){
+	if( class_exists("WooCommerce") ){
+		return get_permalink( get_option('woocommerce_myaccount_page_id') );
+	}else{
+		return wp_login_url();
+	}
 }
 ?>
