@@ -20,6 +20,9 @@ require_once("inc/admin.php");
 
 add_filter( 'authenticate', 'wp63_check_user_verification', 35, 3 );
 add_filter( 'insert_user_meta', 'wp63_insert_verification_code', 35, 3);
+add_filter( 'woocommerce_registration_auth_new_customer', 'wp63_prevent_wc_auto_login', 10, 2);
+add_action( 'woocommerce_registration_redirect', 'wp63uv_redirect_after_registration');
+
 add_shortcode( 'user_verification', 'wp63_sc_verification_box');
 
 if ( class_exists( 'WooCommerce' ) ) {
@@ -89,7 +92,15 @@ function wp63_sc_verification_box($atts){
 
 	}else{
 		if( isset( $_GET['user_id'] ) ){
-			$return = '<form name="wp63-user-verification-form" method="post">' . PHP_EOL .
+			$return = "";
+			if( isset( $_GET['registered']) ){
+				$user = get_userdata( $user_id );
+				$email = $user->user_email;
+
+				$return .= '<p class="wp63-user-registered-notify">' . sprintf(__("Thank you for registration. Your activation code has been sent to %1$s. Use activation code to activate your account in the form below"), $email) . '</p>';
+			}
+
+			$return .= '<form name="wp63-user-verification-form" method="post">' . PHP_EOL .
 				'<input type="hidden" name="user_id" value="' . $_GET['user_id'] . '">' . PHP_EOL .
 				'<input type="text" name="verification_code" placeholder="'. __('Verification Code', 'wp63uv') .'" class="wp63-verification-input">' . PHP_EOL .
 				'<button type="submit">' . __('Verify', 'wp63uv') . '</button>' . PHP_EOL .
@@ -149,5 +160,16 @@ function myplugin_woocommerce_locate_template( $template, $template_name, $templ
 
 	// Return what we found
 	return $template;
+}
+
+function wp63_prevent_wc_auto_login($status, $user){
+	$GLOBALS['wp63_user_id'] = $user;
+	return false;
+}
+
+function wp63uv_redirect_after_registration(){
+	$verification_page = get_permalink(get_option('wp63uv_page_setting_id')) . "?user_id=" . $GLOBALS['wp63_user_id'] . "&registered=true";
+
+	return $verification_page;
 }
 ?>
