@@ -63,7 +63,7 @@ function wp63_verify_user($user_id, $verification_code){
 
 		return true;
 	}else{
-		return new WP_Error("user_verfication", __("Invalid verification code", "wp63uv"));
+		return new WP_Error("user_verfication", __("Invalid verification code - " . $confirm, "wp63uv"));
 	}
 }
 
@@ -75,7 +75,9 @@ function wp63_create_verification_code(){
 }
 
 function wp63_insert_verification_code($meta, $user, $update){
-	$meta['fresh_verification_code'] = wp63_create_verification_code();
+	$GLOBALS['verification_code'] = wp63_create_verification_code();
+
+	$meta['fresh_verification_code'] = $GLOBALS['verification_code'];
 
 	return $meta;
 }
@@ -121,7 +123,7 @@ function wp63_send_verification_email( $user_id ){
 	$username = $user->user_login;
 	$name = $user->first_name;
 	$email = $user->user_email;
-	$code = get_user_meta($user_id, "fresh_verification_code", true);
+	$code = $GLOBALS['verification_code'];
 	$title = __("Account Verification on ", "wp63uv") . get_option("blogname");
 	$verification_page = get_permalink(get_option('wp63uv_page_setting_id')) . "?user_id=" . $user_id;
 	$lostpassword = wp_lostpassword_url();
