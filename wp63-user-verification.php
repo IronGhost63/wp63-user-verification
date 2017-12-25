@@ -69,15 +69,16 @@ function wp63_verify_user($user_id, $verification_code){
 
 function wp63_create_verification_code(){
 	$seed = time();
-	$seed = apply_filters("wp63_verification_code_generation", $seed);
+	//$seed = apply_filters("wp63_verification_code_generation", $seed);
 
 	return sha1($seed);
+	//return $seed;
 }
 
 function wp63_insert_verification_code($meta, $user, $update){
 	$GLOBALS['verification_code'] = wp63_create_verification_code();
 
-	$meta['fresh_verification_code'] = $GLOBALS['verification_code'];
+	$meta['fresh_verification_code'] = wp63_create_verification_code();
 
 	return $meta;
 }

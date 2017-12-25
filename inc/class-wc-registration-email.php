@@ -41,7 +41,7 @@ class WP63_Email_Customer_New_Account extends WC_Email {
 		if ( $user_id ) {
 			$this->object             = new WP_User( $user_id );
 
-			$this->verification_code		= $GLOBALS['verification_code'];
+			$this->verification_code		= get_user_meta($user_id, 'fresh_verification_code', true);
 			$this->verification_page 		= get_permalink(get_option('wp63uv_page_setting_id')) . "?user_id=" . $this->object->ID;
 
 			$this->user_pass				= $user_pass;
